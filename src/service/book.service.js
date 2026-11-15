@@ -128,12 +128,56 @@ export const updateBookTitle = async (isbn, title) => {
     }
 }
 
-export const getBooksByAuthor = async (author) => {
-    //TODO implement the service logic
+export const getBooksByAuthor = async (authorName) => {
+    const author = await authorRepository.findAuthorById(authorName);
+    if (!author) {
+        throw new Error(`Author with name ${authorName} not found`);
+    }
+    return await author.getBooks({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        joinTableAttributes: [],
+        include: [
+            {
+                model: Author,
+                as: 'authors',
+                through: {
+                    attributes: []
+                },
+                attributes: ['name',
+                    [sequelize.col('birth_date'), 'birthDate']
+                ]
+            }
+        ]
+
+    });
 }
 
-export const getBooksByPublisher = async (publisher) => {
-    //TODO implement the service logic
+export const getBooksByPublisher = async (publisherName) => {
+    const author = await publisherRepository.findPublisherById(publisherName);
+    if (!author) {
+        throw new Error(`Publisher with name ${publisherName} not found`);
+    }
+    return await publisher.getBooks({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        joinTableAttributes: [],
+        include: [
+            {
+                model: Author,
+                as: 'authors',
+                through: {
+                    attributes: []
+                },
+                attributes: ['name',
+                    [sequelize.col('birth_date'), 'birthDate']
+                ]
+            }
+        ]
+
+    });
 }
 
 export const getBookAuthors = async (isbn) => {
