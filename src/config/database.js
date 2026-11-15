@@ -1,5 +1,6 @@
 import {Sequelize} from 'sequelize';
 
+
 //Create a new Sequelize instance
 
 const sequelize = new Sequelize(
@@ -10,7 +11,7 @@ const sequelize = new Sequelize(
         host: process.env.DB_HOST || 'localhost',
         dialect: process.env.DB_DIALECT || 'mysql',
         port: process.env.DB_PORT || 3306,
-        logging: process.env.NODE_ENV === 'development'
+        logging: process.env.NODE_ENV === 'development' ? console.log : false
     }
 
 
