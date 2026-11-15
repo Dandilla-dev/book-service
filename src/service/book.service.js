@@ -1,6 +1,7 @@
 import * as bookRepository from "../repositories/book.repository.js";
 import * as authorRepository from "../repositories/author.repository.js";
 import * as publisherRepository from "../repositories/publisher.repository.js";
+import {findBookWithAuthors} from "../repositories/book.repository.js";
 
 export const addBook = async (book) => {
 const {isbn, title} = book;
@@ -32,11 +33,22 @@ export const getBookByIsbn = async (isbn) => {
 }
 
 export const deleteBook = async (isbn) => {
-    //TODO implement the service logic
+    const book = await bookRepository.findBookWithAuthors(isbn);
+    if (!book) {
+        throw new Error(`Book with isbn ${isbn} not found`);
+    }
+    await book.destroy();
+    return book;
 }
 
 export const updateBook = async (isbn, title) => {
-    //TODO implement the service logic
+    const book = await bookRepository.findBookWithAuthors(isbn);
+    if (!book) {
+        throw new Error(`Book with isbn ${isbn} not found`);
+    }
+    book.title = title;
+    await book.save();
+    return book;
 }
 
 export const getBooksByAuthor = async (author) => {
