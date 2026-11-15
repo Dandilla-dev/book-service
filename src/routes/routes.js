@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {addBook, getBookByIsbn, deleteBook,
-    updateBook, getBooksByAuthor, getBooksByPublisher,
+    updateBookTitle, getBooksByAuthor, getBooksByPublisher,
     getBookAuthors, getPublishersByAuthor, deleteAuthor} from '../controllers/book.controllers.js';
 
 const router = Router();
@@ -8,7 +8,7 @@ const router = Router();
 router.post('/book', addBook);
 router.get('/book/:isbn', getBookByIsbn);
 router.delete('/book/:isbn', deleteBook);
-router.patch('/book/:isbn/title/:title', updateBook);
+router.patch('/book/:isbn/title/:title', updateBookTitle);
 router.get('/books/author/:author', getBooksByAuthor);
 router.get('/books/publisher/:publisher', getBooksByPublisher);
 router.get('/authors/book/:isbn', getBookAuthors);

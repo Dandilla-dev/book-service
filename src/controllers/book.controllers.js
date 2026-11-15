@@ -27,9 +27,9 @@ export const deleteBook = async (req, res, next) => {
     }
 }
 
-export const updateBook = async (req, res, next) => {
+export const updateBookTitle = async (req, res, next) => {
    try {
-       const updated = await bookService.updateBook(req.params.isbn, req.params.title);
+       const updated = await bookService.updateBookTitle(req.params.isbn, req.params.title);
        return res.status(200).json(updated);
    }catch(e) {
        return next(e);
