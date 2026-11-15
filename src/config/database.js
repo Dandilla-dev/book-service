@@ -1,6 +1,6 @@
 import {Sequelize} from 'sequelize';
 
-//Create new Sequelize instance
+//Create a new Sequelize instance
 
 const sequelize = new Sequelize(
             process.env.DB_NAME || 'test',

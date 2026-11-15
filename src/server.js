@@ -17,4 +17,4 @@ async function startServer() {
     app.listen(process.env.PORT || 8080, () => console.log(`Server started on ${process.env.PORT || 8080}. Press Ctrl+C to stop.`));
 }
 
-startServer()
+startServer();
