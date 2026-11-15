@@ -1,7 +1,30 @@
-// import * as bookRepository from "../repository/book.repository.js";
+import * as bookRepository from "../repositories/book.repository.js";
+import * as authorRepository from "../repositories/author.repository.js";
+import * as publisherRepository from "../repositories/publisher.repository.js";
 
 export const addBook = async (book) => {
-    //TODO implement the service logic
+const {isbn, title} = book;
+if (await bookRepository.findBookById(isbn)) {
+    throw new Error("Book with same isbn already exists");
+}
+//Create or update publisher
+    let publisher = await publisherRepository.findPublisherById(book.publisher);
+    if (!publisher) {
+        await publisherRepository.addPublisher(book.publisher);
+    }
+
+    // Process the authors
+    const authors = [];
+    for (const a of book.authors) {
+        let author = await authorRepository.findAuthorById(a.name);
+        if (!author) {
+            author = await authorRepository.addAuthor(a);
+        }
+        authors.push(author);
+    }
+// Create new Book
+    book = await bookRepository.addBook({isbn, title, publisher:book.publisher, authors});
+    await book.setAuthors(authors);
 }
 
 export const getBookByIsbn = async (isbn) => {
