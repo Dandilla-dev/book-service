@@ -193,8 +193,13 @@ export const getBookAuthors = async (isbn) => {
     });
 }
 
-export const getPublishersByAuthor = async (author) => {
-    //TODO implement the service logic
+export const getPublishersByAuthor = async (authorName) => {
+    const author = await authorRepository.findAuthorById(authorName);
+    if (!author) {
+        throw new Error(`Author with name ${authorName} not found`);
+    }
+    const books = await author.getBooks();
+    return [...new Set(books.map(book => book.publisher))];
 }
 
 export const deleteAuthor = async (author) => {
