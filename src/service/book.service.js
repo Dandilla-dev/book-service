@@ -155,15 +155,16 @@ export const getBooksByAuthor = async (authorName) => {
 }
 
 export const getBooksByPublisher = async (publisherName) => {
-    const author = await publisherRepository.findPublisherById(publisherName);
-    if (!author) {
+    if (!await publisherRepository.findPublisherById(publisherName)) {
         throw new Error(`Publisher with name ${publisherName} not found`);
     }
-    return await publisher.getBooks({
+    return await bookRepository.findBooks({
+        where: {
+            publisher: publisherName
+        },
         attributes: {
             exclude: ['createdAt', 'updatedAt']
         },
-        joinTableAttributes: [],
         include: [
             {
                 model: Author,
@@ -176,8 +177,7 @@ export const getBooksByPublisher = async (publisherName) => {
                 ]
             }
         ]
-
-    });
+    })
 }
 
 export const getBookAuthors = async (isbn) => {
