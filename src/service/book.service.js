@@ -181,7 +181,16 @@ export const getBooksByPublisher = async (publisherName) => {
 }
 
 export const getBookAuthors = async (isbn) => {
-    //TODO implement the service logic
+    const book = await bookRepository.findBookById(isbn);
+    if (!book) {
+        throw new Error(`Book with ISBN ${isbn} not found`);
+    }
+    return book.authors({
+        attributes: ['name',
+            [sequelize.col('birth_date'), 'birthDate']
+        ],
+        joinTableAttributes: []
+    });
 }
 
 export const getPublishersByAuthor = async (author) => {
