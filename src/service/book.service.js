@@ -120,7 +120,8 @@ export const updateBookTitle = async (isbn, title) => {
         }
         await book.update({title}, {transaction: t});
         await t.commit();
-        return book;
+        const {updatedAt, ...result} = book.toJSON();
+        return result;
     } catch (e) {
         await t.rollback();
         console.log('Error updating book:', e);
