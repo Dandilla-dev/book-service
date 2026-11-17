@@ -185,7 +185,7 @@ export const getBookAuthors = async (isbn) => {
     if (!book) {
         throw new Error(`Book with ISBN ${isbn} not found`);
     }
-    return book.authors({
+    return book.getAuthors({
         attributes: ['name',
             [sequelize.col('birth_date'), 'birthDate']
         ],
@@ -202,11 +202,43 @@ export const getPublishersByAuthor = async (authorName) => {
     return [...new Set(books.map(book => book.publisher))];
 }
 
-export const deleteAuthor = async (author) => {
-    const delAuthor = await authorRepository.findAuthorById(author);
-    if (!delAuthor) {
-        throw new Error(`Author with name ${author} not found`);
-    }
-    await author.destroy();
-}
+// export const deleteAuthor = async (authorName) => {
+//     const author = await authorRepository.findAuthorById(authorName, {
+//         attributes: ['name', ['birth_date', 'birthDate']],
+//     });
+//     if (!author) {
+//         throw new Error(`Author with name ${author} not found`);
+//     }
+//     await author.destroy();
+//     return author;
+// }
 
+export const deleteAuthor = async (authorName) => {
+    const t = await sequelize.transaction();
+    try {
+        const author = await authorRepository.findAuthorById(authorName, {
+            attributes: ['name', ['birth_date', 'birthDate']],
+            transaction: t
+        });
+        if (!author) {
+            throw new Error(`Author with name ${authorName} not found`);
+        }
+        const books = await author.getBooks({
+            include: [{ model: Author, as: 'authors' }],
+            transaction: t
+        });
+        const soloBooks = books.filter(book => book.authors.length === 1);
+
+        for (const book of soloBooks) {
+            await book.destroy({ transaction: t });
+        }
+
+        await author.destroy({ transaction: t });
+
+        await t.commit();
+        return author;
+    } catch (e) {
+        await t.rollback();
+        throw e;
+    }
+}
