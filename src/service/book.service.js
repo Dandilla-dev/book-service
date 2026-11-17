@@ -203,6 +203,10 @@ export const getPublishersByAuthor = async (authorName) => {
 }
 
 export const deleteAuthor = async (author) => {
-    //TODO implement the service logic
+    const delAuthor = await authorRepository.findAuthorById(author);
+    if (!delAuthor) {
+        throw new Error(`Author with name ${author} not found`);
+    }
+    await author.destroy();
 }
 
